@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { GROK_PROVIDERS, authEnabled, signIn } from "@/lib/auth/client";
+import { useState } from "react";
+import { GROK_PROVIDERS, authEnabled, signIn, signInGoogle } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Navigate } from "@tanstack/react-router";
 
@@ -7,7 +8,26 @@ export const Route = createFileRoute("/login")({ component: Login });
 
 function Login() {
   const { user, isPending } = useCurrentUserState();
+  const [error, setError] = useState<string | null>(null);
   if (!isPending && user) return <Navigate to="/" />;
+
+  async function handleGoogle() {
+    setError(null);
+    try {
+      await signInGoogle({ callbackURL: "/" });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Google sign-in failed");
+    }
+  }
+
+  async function handleBroker(providerId: string) {
+    setError(null);
+    try {
+      await signIn(providerId, { callbackURL: "/" });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Sign-in failed");
+    }
+  }
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-[430px] flex-col justify-between bg-bg px-6 py-10">
@@ -23,16 +43,26 @@ function Login() {
       </div>
       <div className="space-y-3 pb-[env(safe-area-inset-bottom)]">
         {authEnabled ? (
-          GROK_PROVIDERS.map((p) => (
+          <>
             <button
-              key={p.providerId}
               type="button"
-              onClick={() => signIn(p.providerId, { callbackURL: "/" })}
+              onClick={() => void handleGoogle()}
               className="pressable h-12 w-full rounded-[14px] bg-fg text-[17px] font-semibold text-bg"
             >
-              Continue with {p.label}
+              Continue with Google
             </button>
-          ))
+            {GROK_PROVIDERS.map((p) => (
+              <button
+                key={p.providerId}
+                type="button"
+                onClick={() => void handleBroker(p.providerId)}
+                className="pressable h-12 w-full rounded-[14px] bg-fg text-[17px] font-semibold text-bg"
+              >
+                Continue with {p.label}
+              </button>
+            ))}
+            {error ? <p className="text-center text-[13px] text-red-500">{error}</p> : null}
+          </>
         ) : (
           <p className="text-sm text-muted">Sign-in is disabled.</p>
         )}

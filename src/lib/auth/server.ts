@@ -172,6 +172,18 @@ const grokOAuthPlugin = authConfigured
     })
   : null;
 
+// Direct Google sign-in (bypasses the Grok broker entirely) — for self-hosted
+// deployments that aren't running behind the Grok platform, where the broker's
+// shared preview client only accepts *.grok-sandbox.com callbacks and a real
+// per-app broker client is never injected. Requires your OWN OAuth app
+// credentials from https://console.cloud.google.com/apis/credentials
+// (Web application type; Authorized redirect URI:
+// `${BETTER_AUTH_URL}/api/auth/callback/google`, e.g.
+// http://localhost:8080/api/auth/callback/google for local dev).
+const googleClientId = env("GOOGLE_CLIENT_ID");
+const googleClientSecret = env("GOOGLE_CLIENT_SECRET");
+export const googleConfigured = Boolean(googleClientId && googleClientSecret);
+
 export const auth = betterAuth({
   baseURL,
   // Deployed apps inject BETTER_AUTH_SECRET. Preview: process-stable secret on
@@ -212,6 +224,14 @@ export const auth = betterAuth({
 
   // Local email/password — toggled only via `./email-password` (not a plugin).
   ...(emailAndPasswordEnabled ? { emailAndPassword: { enabled: true } } : {}),
+
+  // Direct Google OAuth (no broker) — only active when you've set your own
+  // GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET. Uses Better Auth's built-in
+  // callback route (/api/auth/callback/google), separate from the broker's
+  // /api/auth/oauth2/callback/* path above.
+  ...(googleConfigured
+    ? { socialProviders: { google: { clientId: googleClientId!, clientSecret: googleClientSecret! } } }
+    : {}),
 
   // `__Host-` prefixed cookies: the browser REFUSES any same-named cookie that
   // carries a `Domain` attribute, so a sibling `*.grok.me` app cannot "toss" a
