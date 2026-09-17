@@ -57,10 +57,12 @@ export const askAi = createServerFn({ method: "POST" })
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        // Groq's OpenAI-compatible endpoint; this model supports tool calling.
-        // Swap freely for any other tool-capable Groq model (see
+        // Groq's OpenAI-compatible endpoint. llama-3.3-70b-versatile was
+        // decommissioned by Groq (Aug 16, 2026); gpt-oss-120b is their
+        // recommended replacement and also supports tool calling. Swap
+        // freely for any other tool-capable Groq model (see
         // console.groq.com/docs/models) — response shape stays the same.
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-120b",
         messages,
         tools,
         max_tokens: 1200,
