@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { GROK_PROVIDERS, authEnabled, signIn, signInGoogle } from "@/lib/auth/client";
+import { authEnabled, signInGoogle } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { Navigate } from "@tanstack/react-router";
 
@@ -17,15 +17,6 @@ function Login() {
       await signInGoogle({ callbackURL: "/" });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Google sign-in failed");
-    }
-  }
-
-  async function handleBroker(providerId: string) {
-    setError(null);
-    try {
-      await signIn(providerId, { callbackURL: "/" });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign-in failed");
     }
   }
 
@@ -51,16 +42,6 @@ function Login() {
             >
               Continue with Google
             </button>
-            {GROK_PROVIDERS.map((p) => (
-              <button
-                key={p.providerId}
-                type="button"
-                onClick={() => void handleBroker(p.providerId)}
-                className="pressable h-12 w-full rounded-[14px] bg-fg text-[17px] font-semibold text-bg"
-              >
-                Continue with {p.label}
-              </button>
-            ))}
             {error ? <p className="text-center text-[13px] text-red-500">{error}</p> : null}
           </>
         ) : (
