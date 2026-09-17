@@ -20,7 +20,7 @@ export const askAi = createServerFn({ method: "POST" })
     }) => d,
   )
   .handler(async ({ context, data }) => {
-    const apiKey = process.env.XAI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return { ok: false as const, error: "AI is not available in this environment" };
     }
@@ -50,14 +50,17 @@ export const askAi = createServerFn({ method: "POST" })
       { role: "user", content: data.message.slice(0, 4000) },
     ];
 
-    const res = await fetch("https://api.x.ai/v1/chat/completions", {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "grok-4.5",
+        // Groq's OpenAI-compatible endpoint; this model supports tool calling.
+        // Swap freely for any other tool-capable Groq model (see
+        // console.groq.com/docs/models) — response shape stays the same.
+        model: "llama-3.3-70b-versatile",
         messages,
         tools,
         max_tokens: 1200,
