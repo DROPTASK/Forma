@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: var(--app-bg);
+  --color-card: var(--app-card);
+  --color-elevated: var(--app-elevated);
+  --color-fg: var(--app-fg);
+  --color-muted: var(--app-muted);
+  --color-separator: var(--app-separator);
+  --color-accent: var(--app-accent);
+  --color-accent-fg: #ffffff;
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-danger: #ff453a;
+  --color-info: #5e5ce6;
+  --color-ring-move: #ff375f;
+  --color-ring-ex: #30d158;
+  --color-ring-stand: #0af5ff;
+  --color-tint-train: #0a84ff;
+  --color-tint-eat: #ff9f0a;
+  --color-tint-body: #30d158;
+  --color-tint-ai: #5e5ce6;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+}
+
+:root {
+  --app-bg: #f2f2f7;
+  --app-card: #ffffff;
+  --app-elevated: #ffffff;
+  --app-fg: #1c1c1e;
+  --app-muted: #6e6e73;
+  --app-separator: #e5e5ea;
+  --app-accent: #0a84ff;
+  --app-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  color-scheme: light;
+}
+
+html.dark {
+  --app-bg: #000000;
+  --app-card: #1c1c1e;
+  --app-elevated: #2c2c2e;
+  --app-fg: #ffffff;
+  --app-muted: #8e8e93;
+  --app-separator: #38383a;
+  --app-accent: #0a84ff;
+  --app-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.glass {
+  background: color-mix(in srgb, var(--app-card) 78%, transparent);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+}
+
+.pressable {
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pressable:active {
+  transform: scale(0.97);
+  opacity: 0.92;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .pressable:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+.marquee {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 12s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
